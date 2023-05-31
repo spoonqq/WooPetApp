@@ -20,7 +20,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 const Drawer = createDrawerNavigator();
 
 const Stack = createStackNavigator();
-
+//ESTE ES UN COMENTARIO PARA VER SI JALA EL PUSH
 const HomeRoute = () => {
     return (
         
