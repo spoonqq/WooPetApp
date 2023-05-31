@@ -9,53 +9,26 @@ const CustomDrawer = (props) => {
     <View style={{flex: 1}}>
       <DrawerContentScrollView
         {...props}
-        contentContainerStyle={{backgroundColor: '#E1F8D7'}}>
+        >
         <ImageBackground
           
-          style={{padding: 20}}>
+          style={{padding: 20, backgroundColor: '#3B1F2B', height: '23%'}}>
+          
+          <View style={{flexDirection: 'row', height: '0%'}}>
+            
           <Image
             source={require('../assets/perrogracioso2.png')}
-            style={{height: 80, width: 80, borderRadius: 40, marginBottom: 10}}
+            style={{height: 110, width: 153, borderRadius: 0, marginTop: '28%', position: 'absolute'}}
           />
-          <Text
-            style={{
-              color: '#000000D9',
-              fontSize: 18,
-              fontFamily: 'Roboto-Medium',
-              marginBottom: 5,
-            }}>
-            Morttem
-          </Text>
-          <View style={{flexDirection: 'row'}}>
-            <Text
-              style={{
-                color: '#fff',
-                fontFamily: 'Roboto-Regular',
-                marginRight: 5,
-              }}>
-              
-            </Text>
             
           </View>
         </ImageBackground>
-        <View style={{flex: 1, backgroundColor: '#fff', paddingTop: 10}}>
+        <View style={{backgroundColor: 'white', marginTop: '10%', height: 700 }}>
           <DrawerItemList {...props} />
+          
         </View>
       </DrawerContentScrollView>
       <View style={{padding: 20, borderTopWidth: 1, borderTopColor: '#ccc'}}>
-        <TouchableOpacity onPress={() => {}} style={{paddingVertical: 15}}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Ionicons name="share-social-outline" size={22} />
-            <Text
-              style={{
-                fontSize: 15,
-                fontFamily: 'Roboto-Medium',
-                marginLeft: 5,
-              }}>
-              Tell a Friend
-            </Text>
-          </View>
-        </TouchableOpacity>
         <TouchableOpacity onPress={() => {}} style={{paddingVertical: 15}}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Ionicons name="exit-outline" size={22} />
@@ -65,7 +38,7 @@ const CustomDrawer = (props) => {
                 fontFamily: 'Roboto-Medium',
                 marginLeft: 5,
               }}>
-              Sign Out
+              Cerrar sesión
             </Text>
           </View>
         </TouchableOpacity>

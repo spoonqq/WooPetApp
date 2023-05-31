@@ -160,7 +160,13 @@ const RegisScreen = ({ navigation }) => {
             reverse
             onPress={() => navigation.navigate('Login')}
           />
-        </ScrollView>
+          <View style={styles.ContImg}>
+          <Image
+                style={styles.image2}
+                source={require("../assets/dcd.png")}
+              />
+         </View>
+        </ScrollView> 
       );
       
         
@@ -183,6 +189,12 @@ const styles = StyleSheet.create({
       width: 500,
       height: 280,
       flex: 1,
+    },
+    image2: {
+      width: 350,
+      height: 150,
+      alignItems: 'flex-start'
+      
     },
     headerContainer: {
       width: '80%',
@@ -244,7 +256,8 @@ const styles = StyleSheet.create({
       height: '22%',
       justifyContent: 'center',
       alignItems: 'center',
-      borderRadius: 15
+      borderRadius: 15,
+      marginTop: '10%'
 
     },
     buttonText: {
@@ -260,6 +273,10 @@ const styles = StyleSheet.create({
     },
     BtnReg:{
       alignItems: 'center',
+    },
+    ContImg:{
+        
+        alignItems: 'flex-end'
     }
   });
   

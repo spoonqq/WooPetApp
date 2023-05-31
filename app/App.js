@@ -9,7 +9,7 @@ import RegisScreen from './RegisScreen';
 import ReporteA from './ReporteA';
 import Busqueda from './Busqueda';
 import Adopciones from './Adopciones';
-import Perfil from './Perfil';
+import Home from './Home';
 import Campañas from './Campañas';
 import Historial from './Historial';
 import Configuracion from './Configuracion';
@@ -35,6 +35,11 @@ const HomeRoute = () => {
             fontSize: 15,
           },
         }}>
+          <Drawer.Screen name='Home' component={Home} options={{
+          drawerIcon: ({color}) => (
+            <Ionicons name="home-outline" size={25} color={color} />
+          ),
+        }}/>
             <Drawer.Screen name='Map' component={Map} options={{
           drawerIcon: ({color}) => (
             <Ionicons name="map-outline" size={25} color={color} />
@@ -57,12 +62,7 @@ const HomeRoute = () => {
           ),
           
         }}/>
-        <Drawer.Screen name='Perfil' component={Perfil} options={{
-          drawerIcon: ({color}) => (
-            <Ionicons name="person-circle-outline" size={25} color={color} />
-          ),
-          
-        }}/>
+        
         <Drawer.Screen name='Campañas' component={Campañas} options={{
           drawerIcon: ({color}) => (
             <Ionicons name="paw-outline" size={25} color={color} />
