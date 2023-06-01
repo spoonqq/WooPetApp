@@ -17,11 +17,15 @@ import Donaciones from './Donaciones';
 import CustomDrawer from './CustomDrawer';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+
 const Drawer = createDrawerNavigator();
 
 const Stack = createStackNavigator();
 
+
+
 const HomeRoute = () => {
+  
     return (
         
         <Drawer.Navigator drawerContent={props => <CustomDrawer {...props} />} initialRouteName='Map' screenOptions={{
@@ -99,6 +103,7 @@ const App = () => {
                 <Stack.Screen options={{ headerShown: false }} name='Login' component={LoginScreen} />
                 <Stack.Screen options={{ headerShown: false }} name='Registro' component={RegisScreen} />
                 <Stack.Screen options={{ headerShown: false }} name='Map' component={HomeRoute} />
+                <Stack.Screen options={{ headerShown: true }} name='Home' component={Home} />
             </Stack.Navigator>
         </NavigationContainer>
     );

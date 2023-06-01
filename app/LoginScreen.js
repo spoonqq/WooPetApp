@@ -5,6 +5,7 @@ import fb from './firebaseConfig';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import { useFonts } from 'expo-font';
 
 const LogoImage = require('../assets/Logo.png');
 
@@ -29,6 +30,15 @@ const LoginScreen = ({ navigation }) => {
             })
 
     }
+    
+    const [fontsLoaded] = useFonts({
+        PassionOne: require ("../assets/fonts/PassionOne-Regular.ttf"),
+        Comfortaa: require ("../assets/fonts/Comfortaa-Regular.ttf"),
+        SupermercadoOne: require ("../assets/fonts/SupermercadoOne-Regular.ttf"),
+        Quicksand: require ("../assets/fonts/Quicksand-Regular.ttf"),
+        DaysOne: require ("../assets/fonts/DaysOne-Regular.ttf"),
+        OpenSansHebrewCondensed: require ("../assets/fonts/OpenSansHebrewCondensed-Bold.ttf")
+      })
 
     return (
         <ScrollView>
@@ -122,21 +132,19 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     FontTitulo: {
-        fontfamily: 'Open Sans Hebrew Condensed',
         fontSize: 36,
-        paddingTop: 20,
-        marginLeft: '-3%',
-        width: '100%',
+        paddingTop: 20,    
         color: '#000000',
-        fontWeight: 'bold',
         marginBottom: 34,
-        fontStyle: 'Open Sans Hebrew Condensed'
+        //fontFamily: 'OpenSansHebrewCondensed'
+        
     },
     FontSubtitulo: {
         fontSize: 20,
         color: '#000000',
         fontWeight: 'bold',
-        paddingBottom: 5
+        paddingBottom: 5,
+        
     },
     TextInput: {
         flex: 1,
