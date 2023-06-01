@@ -2,7 +2,12 @@ import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const Campañas = () => {
+
+const Campañas = ({ route }) => {
+
+  const { nombre, pelo, raza, sexo, tamanio, list } = route.params;
+
+
   return (
     <View style={styles.cont1}>
       <View style={styles.cont2}>
@@ -12,15 +17,11 @@ const Campañas = () => {
         <Text>SE BUSCA</Text>
       </View>
       <View style={styles.cont4}>
-        <Text>00000</Text>
-        <Text>00000</Text>
-        <Text>00000</Text>
-        <Text>00000</Text>
-        <Text>00000</Text>
-        <Text>00000</Text>
-        <Text>00000</Text>
-        <Text>00000</Text>
-        <Text>00000</Text>
+        <Text>{nombre}</Text>
+        <Text>{pelo}</Text>
+        <Text>{raza}</Text>
+        <Text>{sexo}</Text>
+        <Text>{tamanio}</Text>
       </View>
       <View style={styles.cont5}>
         <Text>00000</Text>
