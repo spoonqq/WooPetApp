@@ -29,6 +29,7 @@ const Markers = () => {
             raza: doc.data().raza,
             sexo: doc.data().sexo,
             tamanio: doc.data().tamaño,
+            // url: doc.data().url,
             longitude: doc.data().longitude,
             latitude: doc.data().latitude
           })
@@ -43,7 +44,7 @@ const Markers = () => {
   }, [])
 
   return (
-    dogInfo.map(({ nombre, pelo, raza, sexo, tamanio, ...list }) => {
+    dogInfo.map(({ nombre, pelo, raza, sexo, tamanio, url, ...list }) => {
       return (
         <Marker
           coordinate={list}
@@ -55,6 +56,7 @@ const Markers = () => {
               raza: raza,
               sexo: sexo,
               tamanio: tamanio,
+              // url: url,
               list: list
             })
           }}

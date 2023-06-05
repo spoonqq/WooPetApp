@@ -1,23 +1,25 @@
-import { View, Text, SafeAreaView, TextInput, Image, StatusBar, StyleSheet, TouchableOpacity, ImageBackground, ScrollView, Alert } from 'react-native'
-import React, { useState } from 'react'
+import { Platform, View, Text, SafeAreaView, TextInput, Image, StatusBar, StyleSheet, TouchableOpacity, ImageBackground, ScrollView, Alert } from 'react-native'
+import React, { useState, useEffect } from 'react'
 import MapView, { Marker } from 'react-native-maps';
 import fb from './firebaseConfig';
 import { collection, addDoc, getFirestore } from 'firebase/firestore';
+import storage, { getStorage, ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+import * as ImagePicker from 'expo-image-picker';
 
 const database = getFirestore(fb);
 
 const ReporteA = ({ navigation }) => {
 
+
+    const defaultImage = require("../assets/upload.png")
+    const [url, setUrl] = React.useState('');
+    const [uploading, setUploading] = useState(false);
+    const [image, setImage] = React.useState(null);
     const [nombre, setNombre] = React.useState('');
-
     const [tamaño, setTamaño] = React.useState('');
-
     const [pelo, setPelo] = React.useState('');
-
     const [raza, setRaza] = React.useState('');
-
     const [sexo, setSexo] = React.useState('');
-
 
     const [origin, setOrigin] = React.useState({
         latitude: 29.089238,
@@ -29,8 +31,71 @@ const ReporteA = ({ navigation }) => {
         longitude: -110.971566,
     });
 
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        console.log(result);
+
+        if (!result.canceled) {
+            setImage(result.assets[0].uri);
+        }
+    };
+
+    const uploadFiles = async () => {
+        // Create the file metadata
+        /** @type {any} */
+        const metadata = {
+            contentType: 'image/jpeg'
+        };
+
+        const store = getStorage(fb);
+        const storageRef = ref(store, `images/` + Date.now());
+        const uploadTask = uploadBytesResumable(storageRef, image, metadata);
+        
+
+        uploadTask.on('state_changed',
+            (snapshot) => {
+                switch (snapshot.state) {
+                    case 'paused':
+                        console.log('Upload is paused');
+                        break;
+                    case 'running':
+                        console.log('Upload is running');
+                        break;
+                }
+            },
+
+            (error) => {
+
+                switch (error.code) {
+                    case 'storage/unauthorized':
+
+                        break;
+                    case 'storage/canceled':
+                        break;
+
+                    case 'storage/unknown':
+                        break;
+                }
+            },
+            () => {
+                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                    setUrl(downloadURL);
+                });
+            }
+        );
+
+    }
+
+
     const RegistrarCoord = async () => {
         console.log(direction)
+        await uploadFiles();
         try {
             const docRef = await addDoc(collection(database, "ReportesAdopcion"), {
                 latitude: direction.latitude,
@@ -40,12 +105,12 @@ const ReporteA = ({ navigation }) => {
                 pelo: pelo,
                 raza: raza,
                 sexo: sexo,
-                
+                url: url
             });
-            
+
             Alert.alert(
-                'Registro de reporte realizado','',
-                
+                'Registro de reporte realizado', '',
+
                 [{ text: 'Aceptar', onPress: () => { navigation.goBack() } }]
 
             );
@@ -70,10 +135,14 @@ const ReporteA = ({ navigation }) => {
                     <StatusBar style="light-content" />
                     <ScrollView>
 
-                        <Image
-                            style={{ width: 150, height: 150, borderRadius: 180, marginTop: 30, alignSelf: 'center' }}
-                            source={require("../assets/upload.png")}
-                        />
+                        <TouchableOpacity
+                            onPress={pickImage}
+                            style={{ alignItems: 'center' }}
+                        >
+                            {image !== null
+                                ? <Image source={{ uri: image }} style={{ width: 200, height: 200, borderRadius: 150 }} />
+                                : <Image source={require("../assets/upload.png")} style={{ width: 200, height: 200, borderRadius: 150 }} />}
+                        </TouchableOpacity>
 
                         <Text style={{ color: '#666', fontWeight: '700', fontSize: 20, marginBottom: 10, marginTop: 5 }}>Reporte de adopción</Text>
                         <Text style={styles.FontCampo}>Nombre</Text>

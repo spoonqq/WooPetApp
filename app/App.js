@@ -15,17 +15,15 @@ import Historial from './Historial';
 import Configuracion from './Configuracion';
 import Donaciones from './Donaciones';
 import CustomDrawer from './CustomDrawer';
+import SelectionReport from './SelectionReport';
+import MapClean from './MapClean';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
 
 const Drawer = createDrawerNavigator();
 
 const Stack = createStackNavigator();
 
-
-
 const HomeRoute = () => {
-  
     return (
         
         <Drawer.Navigator drawerContent={props => <CustomDrawer {...props} />} initialRouteName='Map' screenOptions={{
@@ -49,7 +47,7 @@ const HomeRoute = () => {
             <Ionicons name="map-outline" size={25} color={color} />
           ),
         }}/>
-            <Drawer.Screen name='Nuevo Reporte' component={ReporteA} options={{
+            <Drawer.Screen name='Nuevo Reporte' component={SelectionReport} options={{
           drawerIcon: ({color}) => (
             <Ionicons name="receipt-outline" size={25} color={color} />
           ),
@@ -91,6 +89,7 @@ const HomeRoute = () => {
           ),
           
         }}/>
+
         </Drawer.Navigator>
         
     );
@@ -99,11 +98,11 @@ const HomeRoute = () => {
 const App = () => {
     return (
         <NavigationContainer>
-            <Stack.Navigator initialRouteName='Login'>
+            <Stack.Navigator initialRouteName='Map'>
                 <Stack.Screen options={{ headerShown: false }} name='Login' component={LoginScreen} />
                 <Stack.Screen options={{ headerShown: false }} name='Registro' component={RegisScreen} />
                 <Stack.Screen options={{ headerShown: false }} name='Map' component={HomeRoute} />
-                <Stack.Screen options={{ headerShown: true }} name='Home' component={Home} />
+
             </Stack.Navigator>
         </NavigationContainer>
     );

@@ -1,70 +1,141 @@
-import { View, Text, SafeAreaView, TextInput, Image, StatusBar, StyleSheet, TouchableOpacity, ImageBackground, ScrollView, Alert } from 'react-native'
+import { Platform, View, Text, SafeAreaView, TextInput, Image, StatusBar, StyleSheet, TouchableOpacity, ImageBackground, ScrollView, Alert } from 'react-native'
 import MapView, { Marker } from 'react-native-maps';
-import React from 'react'
+import React, { useState } from 'react'
 import fb from './firebaseConfig';
 import { collection, addDoc, getFirestore } from 'firebase/firestore';
-
+import storage, { getStorage, ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+import * as ImagePicker from 'expo-image-picker';
+import Map from './Map';
+import { useNavigation } from '@react-navigation/native';
 
 const database = getFirestore(fb);
 
 const Busqueda = () => {
-  
+
+  const navigation = useNavigation();
+  const [url, setUrl] = React.useState('');
+  const [uploading, setUploading] = useState(false);
+  const [image, setImage] = React.useState(null);
   const [nombre, setNombre] = React.useState('');
+  const [tamaño, setTamaño] = React.useState('');
+  const [pelo, setPelo] = React.useState('');
+  const [raza, setRaza] = React.useState('');
+  const [sexo, setSexo] = React.useState('');
 
-    const [tamaño, setTamaño] = React.useState('');
-
-    const [pelo, setPelo] = React.useState('');
-
-    const [raza, setRaza] = React.useState('');
-
-    const [sexo, setSexo] = React.useState('');
-  
-  const [direction, setDirection] = React.useState({
-    latitude: 29.089238,
-    longitude: -110.971566,
-  });
   const [origin, setOrigin] = React.useState({
     latitude: 29.089238,
     longitude: -110.971566,
   });
 
+  const [direction, setDirection] = React.useState({
+    latitude: 29.089238,
+    longitude: -110.971566,
+  });
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
+  const uploadFiles = async () => {
+    // Create the file metadata
+    /** @type {any} */
+    const metadata = {
+      contentType: 'image/jpeg'
+    };
+
+    const store = getStorage(fb);
+    const storageRef = ref(store, `images/` + Date.now());
+    const uploadTask = uploadBytesResumable(storageRef, image, metadata);
+
+
+    uploadTask.on('state_changed',
+      (snapshot) => {
+        switch (snapshot.state) {
+          case 'paused':
+            console.log('Upload is paused');
+            break;
+          case 'running':
+            console.log('Upload is running');
+            break;
+        }
+      },
+
+      (error) => {
+
+        switch (error.code) {
+          case 'storage/unauthorized':
+
+            break;
+          case 'storage/canceled':
+            break;
+
+          case 'storage/unknown':
+            break;
+        }
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setUrl(downloadURL);
+        });
+      }
+    );
+
+  }
+
+
   const RegistrarCoord = async () => {
     console.log(direction)
+    await uploadFiles();
     try {
-        const docRef = await addDoc(collection(database, "ReportesAdopcion"), {
-            latitude: direction.latitude,
-            longitude: direction.longitude,
-            nombre: nombre,
-            tamaño: tamaño,
-            pelo: pelo,
-            raza: raza,
-            sexo: sexo,
-            
-        });
-        
-        Alert.alert(
-            'Registro de reporte realizado','',
-            
-            [{ text: 'Aceptar', onPress: () => { navigation.goBack() } }]
+      const docRef = await addDoc(collection(database, "ReportesAdopcion"), {
+        latitude: direction.latitude,
+        longitude: direction.longitude,
+        nombre: nombre,
+        tamaño: tamaño,
+        pelo: pelo,
+        raza: raza,
+        sexo: sexo,
+        // url: url
+      });
 
-        );
+      Alert.alert(
+        'Registro de reporte realizado', '',
+
+        [{ text: 'Aceptar', onPress: () => { navigation.navigate('Map') } }]
+
+      );
     } catch (error) {
-        console.log(error)
-        alert('Error al crear el registro')
+      console.log(error)
+      alert('Error al crear el registro')
     }
-}
+  }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView style={{ backgroundColor: '#F8FEF3', flex: 1 }}>
         <View style={styles.cont1}>
-          <View style={{ alignItems: 'center', }}>
-            <Text style={styles.Txt1}>Añade imágenes de la mascota</Text>
+          <View style={{ alignItems: 'center' }}>
+            <TouchableOpacity
+              onPress={pickImage}
+            >
+              {image !== null
+                ? <Image source={{ uri: image }} style={{ width: 400, height: 245, paddingTop: '25%' }} />
+                : <Image source={require("../assets/ImgUp.png")} />}
+            </TouchableOpacity>
           </View>
           <View style={styles.contimg1}>
-            <Image
-              source={require("../assets/ImgUp.png")}
-            />
+
           </View>
         </View>
         <View style={{ alignItems: 'center', height: 60, justifyContent: 'center' }}>
@@ -95,17 +166,17 @@ const Busqueda = () => {
             </Text>
           </View>
           <View style={styles.cont32}>
-            <TextInput placeholder='Nombre de la mascota' style={{ fontSize: 20, left: 20 }} />
+            <TextInput placeholder='Nombre de la mascota' style={{ fontSize: 20, left: 20 }} onChangeText={setNombre} />
           </View>
         </View>
         <View style={styles.cont3}>
           <View style={styles.cont31}>
             <Text style={{ fontSize: 20 }}>
-              Edad:
+              Tamaño:
             </Text>
           </View>
           <View style={styles.cont32}>
-            <TextInput placeholder='Edad de la mascota' style={{ fontSize: 20, left: 20 }} />
+            <TextInput placeholder='Tamaño de la mascota' style={{ fontSize: 20, left: 20 }} onChangeText={setTamaño} />
           </View>
         </View>
         <View style={styles.cont3}>
@@ -115,17 +186,17 @@ const Busqueda = () => {
             </Text>
           </View>
           <View style={styles.cont32}>
-            <TextInput placeholder='Color de pelo' style={{ fontSize: 20, left: 20 }} />
+            <TextInput placeholder='Color de pelo' style={{ fontSize: 20, left: 20 }} onChangeText={setPelo} />
           </View>
         </View>
         <View style={styles.cont3}>
           <View style={styles.cont31}>
             <Text style={{ fontSize: 20 }}>
-              Color de ojos:
+              Sexo:
             </Text>
           </View>
           <View style={styles.cont32}>
-            <TextInput placeholder='Color de ojos' style={{ fontSize: 20, left: 20 }} />
+            <TextInput placeholder='Macho o Hembra' style={{ fontSize: 20, left: 20 }} onChangeText={setSexo} />
           </View>
         </View>
         <View style={styles.cont3}>
@@ -135,36 +206,37 @@ const Busqueda = () => {
             </Text>
           </View>
           <View style={styles.cont32}>
-            <TextInput placeholder='Raza' style={{ fontSize: 20, left: 20 }} />
+            <TextInput placeholder='Raza' style={{ fontSize: 20, left: 20 }} onChangeText={setRaza} />
           </View>
         </View>
-        <View style={styles.cont4}>
+        {/* <View style={styles.cont4}>
           <View style={styles.cont41}>
             <Text style={{ fontSize: 20, }}>Sexo:</Text>
           </View>
-          <View style={styles.cont51}>
-            <Image style={styles.Imgs}
+          <View style={styles.cont32}>
+            {/* <Image style={styles.Imgs}
               source={require("../assets/m.png")}
-            />
-          </View>
-          <View style={styles.cont52}>
+          //   /> */}
+        {/* //   <TextInput placeholder='Macho o Hembra' style={{ fontSize: 20, left: 20 }} />
+          // </View> */}
+        {/* <View style={styles.cont52}>
             <Text style={{ fontSize: 20, }}>Macho</Text>
           </View>
           <View style={styles.cont51}>
             <Image style={styles.Imgs}
               source={require("../assets/h.png")}
             />
-          </View>
-          <View style={styles.cont52}>
+          </View> */}
+        {/* <View style={styles.cont52}>
             <Text style={{ fontSize: 20, }}>Hembra</Text>
-          </View>
-        </View>
+          </View> */}
+        {/* </View> */}
         <View style={styles.cont6}>
           <Text style={{ fontSize: 20, }}>
             Lugar cercano a desaparicion:
           </Text>
         </View>
-        <View style={{ width: '100%', height: 200, alignSelf: 'center',}}>
+        <View style={{ width: '100%', height: 200, alignSelf: 'center', }}>
           <MapView
             style={StyleSheet.absoluteFillObject}
             customMapStyle={styles.mapStyle}
@@ -188,12 +260,14 @@ const Busqueda = () => {
             Mas información:
           </Text>
         </View>
-        <View style= {styles.cont7} >
-              <View styles={styles.cont71}>
-              <Text>Más información que deseas agregar referente al lugar o la mascota.</Text>
-              </View>
+        <View style={styles.cont7} >
+          <View styles={styles.cont71}>
+            <Text>Más información que deseas agregar referente al lugar o la mascota.</Text>
+          </View>
         </View>
-
+        <TouchableOpacity onPress={RegistrarCoord} style={{ backgroundColor: '#34434D', padding: 20, borderRadius: 30, marginBottom: 230, marginTop: 60, alignSelf: 'center', width: '70%', height: 64 }}>
+          <Text style={{ textAlign: 'center', fontWeight: '700', fontSize: 20, color: '#fff' }}>Solicitar ayuda</Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   )
@@ -206,7 +280,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     height: 250,
     backgroundColor: '#D9D9D9',
-    
+
     borderBottomWidth: 3,
     borderBottomColor: '#606E4C'
 
@@ -225,7 +299,7 @@ const styles = StyleSheet.create({
   },
   cont22: {
     width: 100,
-    
+
     position: 'relative',
     left: 90,
     alignItems: 'center',
@@ -233,7 +307,7 @@ const styles = StyleSheet.create({
   },
   cont23: {
     width: 130,
-    
+
     position: 'relative',
     left: 100,
     alignItems: 'center',
@@ -252,7 +326,7 @@ const styles = StyleSheet.create({
   },
   cont3: {
     height: 70,
-    
+
     flexDirection: 'row',
   },
   cont31: {
@@ -283,20 +357,20 @@ const styles = StyleSheet.create({
   },
   cont4: {
     height: 100,
-    
+
     flexDirection: 'row',
     borderBottomWidth: 3,
     borderBottomColor: '#606E4C'
   },
   cont41: {
     width: 60,
-    
+
     left: 30,
     justifyContent: 'center'
   },
   cont51: {
     width: 70,
-    
+
     position: 'relative',
     left: 70,
     alignItems: 'center',
@@ -304,7 +378,7 @@ const styles = StyleSheet.create({
   },
   cont52: {
     width: 70,
-    
+
     position: 'relative',
     left: 70,
     alignItems: 'center',
@@ -314,7 +388,7 @@ const styles = StyleSheet.create({
     height: 35,
     margin: 10
   },
-  cont7:{
+  cont7: {
     width: 350,
     height: 200,
     backgroundColor: 'white',
@@ -326,7 +400,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginBottom: 20
   },
-  cont71:{
+  cont71: {
     width: 30,
     height: 50,
     position: 'relative',

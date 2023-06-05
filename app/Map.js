@@ -3,6 +3,7 @@ import { Icon } from "@rneui/themed";
 import { Alert, Modal, StyleSheet, Text, Pressable, View, Image,TouchableOpacity } from 'react-native';
 import MapView from 'react-native-maps';
 import Markers from './Markers';
+import SelectionReport from './SelectionReport';
 
 const Map = ({ navigation }) => {
 
@@ -42,7 +43,7 @@ const Map = ({ navigation }) => {
                         <View style={styles.modalView}>
                         <Icon style={styles.cruz}
                             name="close"
-                            onPress={() => setModalVisible(!modalVisible)}
+                            onPress={() => navigation.navigate('SelectionReport')}
                         />
                             <Text style={styles.modalText}>Nuevo anuncioo</Text>
                             <Image style={styles.pataImage} source={pata1Image} />
