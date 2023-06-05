@@ -98,7 +98,7 @@ const HomeRoute = () => {
 const App = () => {
     return (
         <NavigationContainer>
-            <Stack.Navigator initialRouteName='Map'>
+            <Stack.Navigator initialRouteName='Login'>
                 <Stack.Screen options={{ headerShown: false }} name='Login' component={LoginScreen} />
                 <Stack.Screen options={{ headerShown: false }} name='Registro' component={RegisScreen} />
                 <Stack.Screen options={{ headerShown: false }} name='Map' component={HomeRoute} />
