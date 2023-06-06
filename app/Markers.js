@@ -29,7 +29,7 @@ const Markers = () => {
             raza: doc.data().raza,
             sexo: doc.data().sexo,
             tamanio: doc.data().tamaño,
-            // url: doc.data().url,
+            url: doc.data().url,
             longitude: doc.data().longitude,
             latitude: doc.data().latitude
           })
@@ -56,7 +56,7 @@ const Markers = () => {
               raza: raza,
               sexo: sexo,
               tamanio: tamanio,
-              // url: url,
+              url: url,
               list: list
             })
           }}

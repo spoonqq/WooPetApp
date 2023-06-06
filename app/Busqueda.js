@@ -1,7 +1,7 @@
 import { Platform, View, Text, SafeAreaView, TextInput, Image, StatusBar, StyleSheet, TouchableOpacity, ImageBackground, ScrollView, Alert } from 'react-native'
 import MapView, { Marker } from 'react-native-maps';
 import React, { useState } from 'react'
-import fb from './firebaseConfig';
+import fb, { firebase } from './firebaseConfig';
 import { collection, addDoc, getFirestore } from 'firebase/firestore';
 import storage, { getStorage, ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import * as ImagePicker from 'expo-image-picker';
@@ -13,9 +13,11 @@ const database = getFirestore(fb);
 const Busqueda = () => {
 
   const navigation = useNavigation();
+
   const [url, setUrl] = React.useState('');
   const [uploading, setUploading] = useState(false);
   const [image, setImage] = React.useState(null);
+
   const [nombre, setNombre] = React.useState('');
   const [tamaño, setTamaño] = React.useState('');
   const [pelo, setPelo] = React.useState('');
@@ -40,24 +42,24 @@ const Busqueda = () => {
       quality: 1,
     });
 
-    console.log(result);
+    const source = { uri: result.assets[0].uri };
+    console.log(source);
+    setImage(source);
 
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
-    }
   };
 
-  const uploadFiles = async () => {
-    // Create the file metadata
-    /** @type {any} */
+  const uploadImage = async () => {
+    setUploading(true);
+
     const metadata = {
       contentType: 'image/jpeg'
     };
-
+    const response = await fetch(image.uri)
+    const blob = await response.blob();
+    const filename = image.uri.substring(image.uri.lastIndexOf('/') + 1);
     const store = getStorage(fb);
-    const storageRef = ref(store, `images/` + Date.now());
-    const uploadTask = uploadBytesResumable(storageRef, image, metadata);
-
+    const storageRef = ref(store, filename);
+    const uploadTask = uploadBytesResumable(storageRef, blob, metadata);
 
     uploadTask.on('state_changed',
       (snapshot) => {
@@ -70,33 +72,35 @@ const Busqueda = () => {
             break;
         }
       },
-
       (error) => {
-
         switch (error.code) {
           case 'storage/unauthorized':
-
             break;
           case 'storage/canceled':
             break;
-
           case 'storage/unknown':
             break;
         }
       },
+
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           setUrl(downloadURL);
+          console.log(url)
         });
+
       }
     );
-
+    setUploading(false);
+    Alert.alert(
+      'Foto subida'
+    )
+    setImage(null);
   }
-
 
   const RegistrarCoord = async () => {
     console.log(direction)
-    await uploadFiles();
+    await uploadImage();
     try {
       const docRef = await addDoc(collection(database, "ReportesAdopcion"), {
         latitude: direction.latitude,
@@ -106,9 +110,16 @@ const Busqueda = () => {
         pelo: pelo,
         raza: raza,
         sexo: sexo,
-        // url: url
+        url: url
       });
 
+      setNombre('');
+      setTamaño('');
+      setPelo('');
+      setRaza('');
+      setSexo('');
+      setUrl(null);
+      setDirection(direction);
       Alert.alert(
         'Registro de reporte realizado', '',
 
@@ -130,7 +141,7 @@ const Busqueda = () => {
               onPress={pickImage}
             >
               {image !== null
-                ? <Image source={{ uri: image }} style={{ width: 400, height: 245, paddingTop: '25%' }} />
+                ? <Image source={{ uri: image.uri }} style={{ width: 400, height: 245, paddingTop: '25%' }} />
                 : <Image source={require("../assets/ImgUp.png")} />}
             </TouchableOpacity>
           </View>
@@ -166,7 +177,12 @@ const Busqueda = () => {
             </Text>
           </View>
           <View style={styles.cont32}>
-            <TextInput placeholder='Nombre de la mascota' style={{ fontSize: 20, left: 20 }} onChangeText={setNombre} />
+            <TextInput 
+              placeholder='Nombre de la mascota' 
+              style={{ fontSize: 20, left: 20 }} 
+              onChangeText={setNombre}
+              value={nombre}
+            />
           </View>
         </View>
         <View style={styles.cont3}>
@@ -176,7 +192,12 @@ const Busqueda = () => {
             </Text>
           </View>
           <View style={styles.cont32}>
-            <TextInput placeholder='Tamaño de la mascota' style={{ fontSize: 20, left: 20 }} onChangeText={setTamaño} />
+            <TextInput 
+              placeholder='Tamaño de la mascota' 
+              style={{ fontSize: 20, left: 20 }} 
+              onChangeText={setTamaño} 
+              value={tamaño}
+            />
           </View>
         </View>
         <View style={styles.cont3}>
@@ -186,7 +207,12 @@ const Busqueda = () => {
             </Text>
           </View>
           <View style={styles.cont32}>
-            <TextInput placeholder='Color de pelo' style={{ fontSize: 20, left: 20 }} onChangeText={setPelo} />
+            <TextInput 
+              placeholder='Color de pelo' 
+              style={{ fontSize: 20, left: 20 }} 
+              onChangeText={setPelo}
+              value={pelo} 
+            />
           </View>
         </View>
         <View style={styles.cont3}>
@@ -196,7 +222,12 @@ const Busqueda = () => {
             </Text>
           </View>
           <View style={styles.cont32}>
-            <TextInput placeholder='Macho o Hembra' style={{ fontSize: 20, left: 20 }} onChangeText={setSexo} />
+            <TextInput 
+              placeholder='Macho o Hembra' 
+              style={{ fontSize: 20, left: 20 }} 
+              onChangeText={setSexo}
+              value={sexo}
+            />
           </View>
         </View>
         <View style={styles.cont3}>
@@ -206,7 +237,12 @@ const Busqueda = () => {
             </Text>
           </View>
           <View style={styles.cont32}>
-            <TextInput placeholder='Raza' style={{ fontSize: 20, left: 20 }} onChangeText={setRaza} />
+            <TextInput 
+              placeholder='Raza' 
+              style={{ fontSize: 20, left: 20 }} 
+              onChangeText={setRaza}
+              value={raza}
+            />
           </View>
         </View>
         {/* <View style={styles.cont4}>

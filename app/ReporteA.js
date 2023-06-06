@@ -11,7 +11,6 @@ const database = getFirestore(fb);
 const ReporteA = ({ navigation }) => {
 
 
-    const defaultImage = require("../assets/upload.png")
     const [url, setUrl] = React.useState('');
     const [uploading, setUploading] = useState(false);
     const [image, setImage] = React.useState(null);
@@ -39,63 +38,109 @@ const ReporteA = ({ navigation }) => {
             quality: 1,
         });
 
-        console.log(result);
+        const source = {uri: result.assets[0].uri};
+        console.log(source);
+        setImage(source);
 
-        if (!result.canceled) {
-            setImage(result.assets[0].uri);
-        }
     };
 
-    const uploadFiles = async () => {
-        // Create the file metadata
-        /** @type {any} */
-        const metadata = {
-            contentType: 'image/jpeg'
-        };
+    // const uploadFiles = async () => {
+    //     // Create the file metadata
+    //     /** @type {any} */
+    //     const metadata = {
+    //         contentType: 'image/jpeg'
+    //     };
 
-        const store = getStorage(fb);
-        const storageRef = ref(store, `images/` + Date.now());
-        const uploadTask = uploadBytesResumable(storageRef, image, metadata);
+    //     const store = getStorage(fb);
+    //     const storageRef = ref(store, `images/` + Date.now());
+    //     const uploadTask = uploadBytesResumable(storageRef, image, metadata);
         
 
-        uploadTask.on('state_changed',
-            (snapshot) => {
-                switch (snapshot.state) {
-                    case 'paused':
-                        console.log('Upload is paused');
-                        break;
-                    case 'running':
-                        console.log('Upload is running');
-                        break;
-                }
-            },
+    //     uploadTask.on('state_changed',
+    //         (snapshot) => {
+    //             switch (snapshot.state) {
+    //                 case 'paused':
+    //                     console.log('Upload is paused');
+    //                     break;
+    //                 case 'running':
+    //                     console.log('Upload is running');
+    //                     break;
+    //             }
+    //         },
 
-            (error) => {
+    //         (error) => {
 
-                switch (error.code) {
-                    case 'storage/unauthorized':
+    //             switch (error.code) {
+    //                 case 'storage/unauthorized':
 
-                        break;
-                    case 'storage/canceled':
-                        break;
+    //                     break;
+    //                 case 'storage/canceled':
+    //                     break;
 
-                    case 'storage/unknown':
-                        break;
-                }
-            },
-            () => {
-                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                    setUrl(downloadURL);
-                });
-            }
-        );
+    //                 case 'storage/unknown':
+    //                     break;
+    //             }
+    //         },
+    //         () => {
+    //             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+    //                 setUrl(downloadURL);
+    //             });
+    //         }
+    //     );
 
+    // }
+    
+    // const uploadFiles = async () => {
+    //     const store = getStorage(fb);
+    //     const storageRef = ref(store, `images/ ${Date.now()}.jpg`);
+      
+    //     const response = await fetch(image.uri);
+    //     const blob = await response.blob();
+    //     const reader = new FileReader();
+      
+    //     reader.onload = async () => {
+    //       const base64data = reader.result;
+    //       console.log('Base64 data:', base64data); // Verificar los datos en base64
+      
+    //       try {
+    //         await uploadString(storageRef, base64data, 'data_url');
+    //         console.log('Archivo cargado exitosamente');
+    //       } catch (error) {
+    //         console.error('Error al cargar el archivo:', error);
+    //       }
+    //     };
+      
+    //     reader.onerror = (error) => {
+    //       console.error('Error al leer el archivo:', error);
+    //     };
+      
+    //     reader.readAsDataURL(blob);
+    //     console.log('Iniciando lectura del archivo...');
+    //   };
+
+    const uploadImage = async () => {
+        setUploading(true);
+        const response = await fetch(image.uri)
+        const blob = await response.blob();
+        const filename = image.uri.substring(image.uri.lastIndexOf('/')+1);
+        var ref = fb.storage().ref().child(filename).put(blob);
+
+        try {
+            await ref;
+        } catch (e) {
+            console.log(e)
+        }
+        setUploading(false);
+        Alert.alert(
+            'Foto subida'
+        )
+        setImage(null);
     }
 
 
     const RegistrarCoord = async () => {
         console.log(direction)
-        await uploadFiles();
+        await uploadImage;
         try {
             const docRef = await addDoc(collection(database, "ReportesAdopcion"), {
                 latitude: direction.latitude,
