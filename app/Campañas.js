@@ -1,9 +1,13 @@
-import { StyleSheet, Text, View, Image } from 'react-native'
+import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MapView, { Marker } from 'react-native-maps';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useNavigation } from '@react-navigation/native';
 
 const Campañas = ({ route }) => {
+
+  const navigation = useNavigation();
 
   const { nombre, pelo, raza, sexo, tamanio, url, list } = route.params;
 
@@ -20,46 +24,50 @@ const Campañas = ({ route }) => {
     setImage(img);
   }, []);
 
-  // useEffect(() => {
-  //   const fetchImage = async () => {
-  //     try {
-  //       const response = await fetch(url);
-  //       const imageData = await response.blob();
-  //       const source = URL.createObjectURL(imageData);
-  //       setImageSource(source);
-  //       setLoading(false);
-  //     } catch (error) {
-  //       console.error('Error al cargar la imagen:', error);
-  //       setLoading(false);
-  //       setError(true);
-  //     }
-  //   };
-
-  //   fetchImage();
-  // }, [url]);
-  
   return (
-    <View style={styles.cont1}>
-      <View style={styles.cont2}>
+    <SafeAreaView style={styles.ContPrincipal}>
+      <TouchableOpacity style={{paddingBottom: 5}} onPress={
+        () => {
+
+          navigation.goBack();
+        }
+      }>
+        <Ionicons name="arrow-back-outline" size={65} />
+      </TouchableOpacity>
+      <View style={{ alignItems: 'center' }}>
         <Image
-          source={image ? { uri: image.url } : null}
           style={{ width: 200, height: 200 }}
+          source={image ? { uri: image.url } : null}
         />
       </View>
-      <View style={styles.cont3}>
-        <Text style={{ fontSize: 35 }}>SE BUSCA</Text>
-      </View>
-      <View style={styles.cont4}>
-        <View style={{ paddingTop: '5%' }}>
-          <Text>Nombre: {nombre}</Text>
-          <Text>Pelo: {pelo}</Text>
-          <Text>Raza: {raza}</Text>
-          <Text>Sexo: {sexo}</Text>
-          <Text>Tamaño: {tamanio}</Text>
+
+      <View style={{ alignItems: 'center' }}>
+        <View style={{ flexDirection: 'row', }}>
+          <Text style={{ fontSize: 40 }}>SE BUSCA</Text>
+          <TouchableOpacity style={styles.ButtonFav}>
+            <Image
+              style={{ width: 40, height: 40 }}
+              source={require("../assets/favorito.png")}
+            />
+          </TouchableOpacity>
+
         </View>
+        <View style={styles.border} />
       </View>
-      <View style={styles.cont5}>
-        <View style={{ width: '70%', height: '55%', alignSelf: 'center' }}>
+      <Text style={{ fontSize: 20, marginLeft: 20, marginTop: 15, fontWeight: 'Bold' }}>Detalles</Text>
+
+
+      <Text style={styles.texto}>Nombre: {nombre}</Text>
+      <Text style={styles.texto}>Pelo: {pelo}</Text>
+      <Text style={styles.texto}>Raza: {raza}</Text>
+      <Text style={styles.texto}>Sexo: {sexo}</Text>
+      <Text style={styles.texto}>Tamaño: {tamanio}</Text>
+      <View style={styles.ContSub}>
+        <View style={styles.border} />
+      </View>
+
+      <View style={styles.mapa}>
+        <View style={{ width: '100%', height: '70%', alignSelf: 'center' }}>
           <MapView
             style={StyleSheet.absoluteFillObject}
             customMapStyle={styles.mapStyle}
@@ -79,45 +87,59 @@ const Campañas = ({ route }) => {
           </MapView>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   )
 }
 
 export default Campañas
 
 const styles = StyleSheet.create({
-  cont1: {
+  ContPrincipal: {
     backgroundColor: "#fffff",
     flex: 1
   },
-  cont2: {
-    backgroundColor: "grey",
-    height: "40%",
-    alignItems: 'center',
-    justifyContent: 'center'
+  ContSub: {
+    alignItems: 'center'
   },
-  cont3: {
-    backgroundColor: "#fffff",
-    height: "10%",
-    alignItems: 'center',
-    justifyContent: 'center'
+  border: {
+    borderBottomWidth: 2,
+    borderBottomColor: 'black',
+    width: '80%',
   },
-  cont4: {
+
+  ButtonFav: {
+    backgroundColor: '#3B1F2B',
+    padding: 5,
+    borderRadius: 60,
+    height: 50,
+    width: 60,
+
+    alignItems: 'center'
+
+  },
+  contenedorText: {
     backgroundColor: "#fffff",
-    height: "20%",
+    height: "25%",
     alignItems: 'flex-start',
-    marginLeft: "15%",
-    marginRight: "15%",
+    marginLeft: "5%",
+    marginRight: "8%",
     borderTopWidth: 1,
-    borderBottomWidth: 1
+    borderBottomWidth: 1,
+
   },
-  cont5: {
+  texto: {
+    fontSize: 20,
+    marginTop: 20,
+    marginLeft: "15%"
+  },
+
+  mapa: {
     backgroundColor: "#fffff",
     height: "30%",
     alignItems: 'flex-start',
-    marginLeft: "15%",
-    marginRight: "15%",
-    marginTop: "2%"
+    marginLeft: "5%",
+    marginRight: "5%",
+    marginTop: "5%"
   },
   mapStyle: [
     {

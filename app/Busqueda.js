@@ -60,7 +60,7 @@ const Busqueda = () => {
     const store = getStorage(fb);
     const storageRef = ref(store, filename);
     const uploadTask = uploadBytesResumable(storageRef, blob, metadata);
-
+    
     uploadTask.on('state_changed',
       (snapshot) => {
         switch (snapshot.state) {
@@ -83,12 +83,10 @@ const Busqueda = () => {
         }
       },
 
-      () => {
+      async () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           setUrl(downloadURL);
-          console.log(url)
         });
-
       }
     );
     setUploading(false);
@@ -100,8 +98,8 @@ const Busqueda = () => {
 
   const RegistrarCoord = async () => {
     console.log(direction)
-    await uploadImage();
     try {
+      
       const docRef = await addDoc(collection(database, "ReportesAdopcion"), {
         latitude: direction.latitude,
         longitude: direction.longitude,
@@ -112,14 +110,7 @@ const Busqueda = () => {
         sexo: sexo,
         url: url
       });
-
-      setNombre('');
-      setTamaño('');
-      setPelo('');
-      setRaza('');
-      setSexo('');
-      setUrl(null);
-      setDirection(direction);
+      await uploadImage();
       Alert.alert(
         'Registro de reporte realizado', '',
 
@@ -130,6 +121,13 @@ const Busqueda = () => {
       console.log(error)
       alert('Error al crear el registro')
     }
+    setNombre('');
+    setTamaño('');
+    setPelo('');
+    setRaza('');
+    setSexo('');
+    setUrl('');
+    setDirection(direction);
   }
 
   return (
@@ -245,28 +243,6 @@ const Busqueda = () => {
             />
           </View>
         </View>
-        {/* <View style={styles.cont4}>
-          <View style={styles.cont41}>
-            <Text style={{ fontSize: 20, }}>Sexo:</Text>
-          </View>
-          <View style={styles.cont32}>
-            {/* <Image style={styles.Imgs}
-              source={require("../assets/m.png")}
-          //   /> */}
-        {/* //   <TextInput placeholder='Macho o Hembra' style={{ fontSize: 20, left: 20 }} />
-          // </View> */}
-        {/* <View style={styles.cont52}>
-            <Text style={{ fontSize: 20, }}>Macho</Text>
-          </View>
-          <View style={styles.cont51}>
-            <Image style={styles.Imgs}
-              source={require("../assets/h.png")}
-            />
-          </View> */}
-        {/* <View style={styles.cont52}>
-            <Text style={{ fontSize: 20, }}>Hembra</Text>
-          </View> */}
-        {/* </View> */}
         <View style={styles.cont6}>
           <Text style={{ fontSize: 20, }}>
             Lugar cercano a desaparicion:

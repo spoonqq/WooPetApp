@@ -31,7 +31,7 @@ const Map = ({ navigation }) => {
                 <Markers />
             </MapView>
             <View syle={styles.viewButton}>
-                <Modal
+                {/* <Modal
                     animationType="slide"
                     transparent={true}
                     visible={modalVisible}
@@ -79,7 +79,7 @@ const Map = ({ navigation }) => {
                     reverse
                     containerStyle={styles.btnContainer}
                     onPress={() => setModalVisible(true)}
-                />
+                /> */}
 
             </View>
         </View>

@@ -69,8 +69,9 @@ const HomeRoute = () => {
           drawerIcon: ({color}) => (
             <Ionicons name="paw-outline" size={25} color={color} />
           ),
-          
+          headerShown: false
         }}/>
+        
         <Drawer.Screen name='Historial' component={Historial} options={{
           drawerIcon: ({color}) => (
             <Ionicons name="reader-outline" size={25} color={color} />
