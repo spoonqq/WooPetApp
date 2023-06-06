@@ -59,14 +59,12 @@ const LoginScreen = ({ navigation }) => {
 
                     <Text style={styles.FontSubtitulo}>Usuario</Text>
                     <View style={styles.viewInput}>
-                        <MaterialIcons
-                            name='alternate-email'
-                            size={25}
-                            color='#101417'
-                            style={{ marginLeft: 10, alignSelf: 'center' }}
-                        />
+                    <Image
+                            style={styles.imagenTI}
+                            source={require("../assets/user1.png")} 
+                            />
                         <TextInput
-                            placeholder='usuario@gmail.com'
+                            placeholder='Usuario@gmail.com'
                             style={styles.TextInput}
                             onChangeText={setUsername}
                             keyboardType='email-addres'
@@ -76,12 +74,10 @@ const LoginScreen = ({ navigation }) => {
 
                     <Text style={styles.FontSubtitulo}>Contraseña</Text>
                     <View style={styles.viewInput}>
-                        <Ionicons
-                            name='ios-lock-closed-outline'
-                            size={25}
-                            color='#101417'
-                            style={{ marginLeft: 10}}
-                        />
+                    <Image
+                            style={styles.imagenTI}
+                            source={require("../assets/password.png")} 
+                            />
                         <TextInput
                             placeholder='Contraseña'
                             style={styles.TextInput}
@@ -90,7 +86,7 @@ const LoginScreen = ({ navigation }) => {
                         />
 
                         <TouchableOpacity onPress={() => { }}>
-                            <Text style={{ color: '#000000', fontWeight: '800', marginRight: 10 }}>¿La olvidaste?</Text>
+                            <Text style={{ color: '#3B1F2B', fontWeight: '800', marginRight: 10 }}>¿La olvidaste?</Text>
                         </TouchableOpacity>
                     </View>
 
@@ -126,8 +122,7 @@ const LoginScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     container: {
-
-        backgroundColor: 'white',
+        backgroundColor: '#FDFFFB',
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -150,18 +145,34 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingVertical: 0,
         paddingStart: 5,
+        fontSize:18,
+        marginLeft:20,
     },
     viewInput: {
         flexDirection: 'row',
         paddingBottom: 1, 
         marginBottom: 25, 
-        borderWidth: 2,
         borderColor: '#000000',
-        borderRadius: 20,
+        borderRadius: 10,
         alignItems: 'center',
         height: 40,
         backgroundColor: '#D9D9D9'
-    }
+    },
+
+    imagenTI:{
+        height:25,
+        width:25,
+        borderRadius:10,
+        padding:5,
+        marginLeft:10,
+    },
+
+    imagenTI:{
+        height:25,
+        width:25,
+        padding:5,
+        marginLeft:10,
+    },
 })
 
 export default LoginScreen

@@ -123,7 +123,7 @@ const Busqueda = () => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView style={{ backgroundColor: '#F8FEF3', flex: 1 }}>
+      <ScrollView style={{ backgroundColor: '#FDFFFB', flex: 1 }}>
         <View style={styles.cont1}>
           <View style={{ alignItems: 'center' }}>
             <TouchableOpacity
@@ -181,12 +181,12 @@ const Busqueda = () => {
         </View>
         <View style={styles.cont3}>
           <View style={styles.cont31}>
-            <Text style={{ fontSize: 20 }}>
+            <Text style={{ fontSize: 18 }}>
               Color de pelo:
             </Text>
           </View>
           <View style={styles.cont32}>
-            <TextInput placeholder='Color de pelo' style={{ fontSize: 20, left: 20 }} onChangeText={setPelo} />
+            <TextInput placeholder='Color de pelaje' style={{ fontSize: 20, left: 20 }} onChangeText={setPelo} />
           </View>
         </View>
         <View style={styles.cont3}>
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   cont32: {
-    left: 80,
+    left: 60,
     justifyContent: 'center',
     borderBottomWidth: 3,
     borderBottomColor: '#606E4C',
